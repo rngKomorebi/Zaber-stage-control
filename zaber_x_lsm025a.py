@@ -55,6 +55,25 @@ def send_home(device_id: int = 0):
     to_device.append(0x00)
 
 
+def renumber_all():
+    '''
+    Function for setting IDs of all devices in the daisy-chain, starting with
+    one directly connected to the PC and setting its ID to '1'.
+
+    Returns
+    -------
+    None.
+
+    '''
+    to_device = bytearray()
+    to_device.append(0x00)
+    to_device.append(0x02)  # command '2' for renumbering
+    to_device.append(0x00)
+    to_device.append(0x00)
+    to_device.append(0x00)
+    to_device.append(0x00)
+
+
 def move_to_relative(rel_pos: int, device_id: int = 1):
     '''
     Function for moving the Zaber X-LSM025A stage to a relative position. Works
