@@ -1,4 +1,4 @@
-""" Script for controlling the Zaber X-LSM025A stage.
+""" Script for controlling the Zaber T-OMG stage.
 
 A 'pyserial' module is required to get access to a serial port.
 
@@ -16,7 +16,7 @@ functions:
 """
 
 import serial
-
+import numpy as np
 
 def send_home(device_id: int = 0):
     '''
@@ -55,9 +55,9 @@ def send_home(device_id: int = 0):
     to_device.append(0x00)
 
 
-def move_to_relative(rel_pos: int, device_id: int = 1):
+def move_to_relative(theta: int, device_id: int = 1):
     '''
-    Function for moving the Zaber X-LSM025A stage to a relative position. Works
+    Function for moving the Zaber T-OMG stage to a relative position. Works
     with both negative and positive input values. The communication is done
     via 6 byte words: 1st byte for the device number the command is send to,
     2nd byte is for the command (see Zaber binary protocol manual), and the
@@ -65,20 +65,22 @@ def move_to_relative(rel_pos: int, device_id: int = 1):
 
     Parameters
     ----------
-    rel_pos : int
-        Relative position to which the stage is desired to move.
-    device_id : int, optional
+    theta : int
+        Relative angle to which the stage is desired to move.
+    device_id : int
+    
         Device ID. In the case of multiple devices, by default they should
         get IDs in a chain starting from 1. Choosing 0 will send the command
         to all devices. The default is 1 for the first device connected.
+        Devices 1 and 2 should be attributed to the azimuthal and elevation actuators.
 
     Returns
     -------
     None.
 
     '''
-    microstep = 0.047625  # microstep of the model X-LSM025A
-
+    
+    
     to_device = bytearray()
     if device_id == 0:
         to_device.append(0x00)
@@ -91,9 +93,17 @@ def move_to_relative(rel_pos: int, device_id: int = 1):
 
     to_device.append(0x15)  # command number '21' - move to the relative
     # position
-
-    if rel_pos > 0:
-        data = int(rel_pos / microstep)  # convert the relative position
+    microstep_az = 11825  # microstep of the model T-OMG for azimuth 
+    microstep_el = 23650  # microstep of the model T-OMG for elevation
+    
+    if device_id == 1: #1 corresponds to azimuthal actuator? TODO
+        A = microstep_az
+    elif device_id == 2:
+        A = microstep_el 
+    R = 64
+    L = 1.524
+    if theta > 0:
+        data = int(np.tan(theta)*A*R/L)  # convert the relative position
         # desired to the internal data for the device
         data_hex = hex(data)[2:]
 
@@ -111,7 +121,7 @@ def move_to_relative(rel_pos: int, device_id: int = 1):
     else:
         # if the input is a negative value, signed data should be converted
         # to unsigned before sending the command to the device
-        data = int(rel_pos / microstep)  # convert the relative position
+        data = int(np.tan(theta)*A*R/L)  # convert the relative position
         # desired to the internal data for the device based on the microstep
         # of the model (X-LSM025A)
         data_hex = hex(data + (1 << 32))
