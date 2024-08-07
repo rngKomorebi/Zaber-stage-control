@@ -18,7 +18,7 @@ functions:
 import serial
 import numpy as np
 
-def send_home(device_id: int = 0):
+def send_home(device_id: int = 0, com: str = 'COM5'):
     '''
     Function for sending the stage home. Takes the device ID as a parameter.
 
@@ -54,8 +54,15 @@ def send_home(device_id: int = 0):
     to_device.append(0x00)
     to_device.append(0x00)
 
+    # open the appropriate USB port
+    # Zaber devices typically communicate over RS-232 at 9600 baud
+    try:
+        serialZABER = serial.Serial(com, baudrate=9600)
+    except serial.SerialException:
+        print("No device has been found at the chosen port")
+    serialZABER.write(to_device)
 
-def move_to_relative(theta: int, device_id: int = 1):
+def move_to_relative(theta: int, device_id: int = 1, com: str = 'COM5'):
     '''
     Function for moving the Zaber T-OMG stage to a relative position. Works
     with both negative and positive input values. The communication is done
@@ -140,7 +147,7 @@ def move_to_relative(theta: int, device_id: int = 1):
     # open the appropriate USB port
     # Zaber devices typically communicate over RS-232 at 9600 baud
     try:
-        serialZABER = serial.Serial('COM5', baudrate=9600)
+        serialZABER = serial.Serial(com, baudrate=9600)
     except serial.SerialException:
         print("No device has been found at the chosen port")
     serialZABER.write(to_device)
