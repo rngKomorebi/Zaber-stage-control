@@ -181,3 +181,4 @@ def move_to_relative(rel_pos: int, device_id: int = 1, port: str = "COM5"):
         print("No device has been found at the chosen port")
     serialZABER.write(to_device)
     serialZABER.close()
+
