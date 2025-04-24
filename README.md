@@ -1,2 +1,2 @@
 # Zaber-X-LSM025A
- A module with commands to operate the Zaber X-LSM025A stage devices.
+A couple of scripts to operate the Zaber X-LSM025A and T-OMG stage devices.

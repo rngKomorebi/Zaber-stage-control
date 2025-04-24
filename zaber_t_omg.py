@@ -1,4 +1,4 @@
-""" Module for controlling the Zaber T-OMG stage.
+"""Module for controlling the Zaber T-OMG stage.
 
 Before moving the stages, sending all devices home is highly recommended.
 For that, the 'send_home' function should be used with the 'device_id'
@@ -9,15 +9,15 @@ functions:
 
     * send_home - function for sending the stage home. Takes the device ID as
     a parameter.
-    
+
     * reset_settings - restore all Zaber stage settings to the default
     ones. Should be used when the device does not respond or function
     properly.
-    
+
     * move_to_relative - function for moving the stage to the relative
     position, which is the sum of the current position plus the distance
     inputted.
-    
+
     * get_current_position - returns the curret position in hexadecimal.
 
 """
